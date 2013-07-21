@@ -1,12 +1,15 @@
 module Munchie
+  # Normalises, tokenises, then extracts values from a text string
   class Parser
     include Handlers
 
+    # Accepts a text string and attempts to recognise and extract known quantities
+    # and measures, which is returned along with the remaining text
     def parse(text)
       puts ""
       puts "----------------------------------------------------------------------------"
       puts "Parsing: #{text}"
-      text = pre_normalize(text)
+      text = normalize(text)
       puts "Normalised: #{text}"
       tokens = tokenize(text)
       puts "Tokens: #{tokens.inspect}"
@@ -16,7 +19,7 @@ module Munchie
       output = get_output(value)
     end
 
-    def pre_normalize(text)
+    def normalize(text)
       text = text.to_s.downcase
       text.gsub!(/\(/, ' ')
       text.gsub!(/\)/, ' ')
@@ -48,7 +51,6 @@ module Munchie
         Handler.new([:text],          :handle_text),
 
         #Handler.new([:scalar, :weight],          :handle_scalar_weight),
-
         #Handler.new([:text], :handle_text),
         #Handler.new([:weight], :handle_weight)
       ]
@@ -62,16 +64,16 @@ module Munchie
 
     def get_output(tokens)
       
-      volume = tokens.select { |t| t.class.ancestors.include?(VolumeVal) }.first # t.tags.select { |x| x.kind_of? Weight } }
+      volume = tokens.select { |t| t.class.ancestors.include?(VolumeVal) }.first
       if !volume.nil?
         puts "Volume: #{volume.word.to_f} mls"
       end
 
-      weight = tokens.select { |t| t.class.ancestors.include?(WeightVal) }.first # t.tags.select { |x| x.kind_of? Weight } }
+      weight = tokens.select { |t| t.class.ancestors.include?(WeightVal) }.first
       if !weight.nil?
         puts "Weight: #{weight.word.to_f} grams"
       end
-      text = tokens.select { |t| t.class.ancestors.include?(TextVal) } #.select(&:to_s)
+      text = tokens.select { |t| t.class.ancestors.include?(TextVal) }
       puts "Text: #{text.inspect}"
     end
 
