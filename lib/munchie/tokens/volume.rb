@@ -24,13 +24,13 @@ module Munchie
     end
 
     def self.scan_for_spoons(token)
-      if token.word =~ /(tbsp?)/
+      if token.word =~ /(tbsp?|tablespoons?)/
         VolumeTablespoon.new($1, 15)
       end
     end
 
     def self.scan_for_teaspoons(token)
-      if token.word =~ /(tsp)/
+      if token.word =~ /(tsp|teaspoon)/
         VolumeTeaspoon.new($1, 5)
       end
     end

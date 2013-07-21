@@ -30,8 +30,17 @@ module Munchie
         return ScalarFraction.new('1/4', '1/4')
       end
 
+      if token.word =~ /¾/
+        return ScalarFraction.new('3/4', '3/4')
+      end
+
       if token.word =~ /½/
         return ScalarFraction.new('1/2', '1/2')
+      end
+
+      
+      if token.word =~ /⅓/
+        return ScalarFraction.new('1/3', '1/3')
       end
     end
 
@@ -47,6 +56,17 @@ module Munchie
   end
 
   class ScalarFraction < Scalar
+    def to_frac(fraction)
+      numerator, denominator = fraction.split('/').map(&:to_f)
+      denominator ||= 1
+      numerator/denominator
+    end
+
+    def initialize(type, value)
+      value = to_frac(value)
+      super(type, value)
+    end
+
     def to_s
       super << '-fraction'
     end
