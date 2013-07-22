@@ -1,91 +1,61 @@
 module Munchie
   # Normalises, tokenises, then extracts values from a text string
   class Parser
-    include Handlers
 
-    NORMALISATION_STEPS = [
-      [/\(/, ' '],
-      [/\)/, ' '],
-      [/,/, ' , '],
-      [/([\d\.]+)([^\/][\D\w])/, '\1 \2'] # Split strings such as 600g 1.5kg 123oz
-    ]
-
-    # Accepts a text string and attempts to recognise and extract known quantities
-    # and measures, the values are then returned along with the remaining text.
-    def parse(text)
-      puts ""
-      puts "----------------------------------------------------------------------------"
-      puts "Parsing: #{text}"
-      text = normalize(text)
-      puts "Normalised: #{text}"
-      tokens = tokenize(text)
-      puts "Tokens: #{tokens.inspect}"
-      value = tokens_to_values(tokens)
-      puts "Output: #{tokens}"
-      puts "Parsed < < < < < < < < < < < < < < < < < < < < <"
-      output = get_output(value)
+    def match(tokens)
+      tokens.each_index do |i|
+        if tags_match?(pattern, tokens, i)
+          parse(tokens, i)
+          puts "Tokens:     #{tokens} after #{self.class}"
+        end
+      end
     end
 
-
-    def normalize(text)
-      text = text.to_s.downcase
-      NORMALISATION_STEPS.each do |step|
-        text.gsub!(step[0], step[1])
+    def includes_tokens?(array, type)
+      array.each do |a|
+        return true if a.class.ancestors.include? type
       end
-      text
+      false
     end
 
-    def tokenize(text)
-      # create tokens for each word
-      tokens = text.split(' ').map { |word| Token.new(word) }
+    def tags_match?(pattern, tokens, token_index)
+      #puts "tags_match?(#{pattern}, #{tokens}, #{token_index})"
 
-      # for each type of tag, tag our tokens
-      [Scalar, Unit, Multiplier, Separator, Text, Volume, Quantity].each do |token|
-        token.scan(tokens)
+      token_class = tokens.map { |x| x.tags }
+      pattern_class = pattern.map { |x| Munchie::Tokens.const_get(x.to_s.gsub(/(?:^|_)(.)/) { $1.upcase }) }
+
+      pattern_size = pattern.size
+      matches = 0
+      pattern_class.each_index do |pi|
+        # if we're on the last token and there's no more to the right
+        return false if token_class[token_index + pi].nil?
+
+        matches += 1 if includes_tokens?(token_class[token_index + pi], pattern_class[pi])
       end
 
-      # return tokens that are tagged
-      tokens.select { |token| token.tagged? }
+      return true if pattern.size == matches
+
+      false
     end
 
-    def tokens_to_values(tokens) #, options)
-      definitions = [
-        Handler.new([:scalar, :scalar_fraction], :handle_scalar_fraction),
-        Handler.new([:scalar, :multiplier],      :handle_scalar_multiplier),
-        Handler.new([:multiplier, :scalar],      :handle_multiplier_scalar),
-        Handler.new([:scalar, :quantity],        :handle_scalar_quantity),
-        Handler.new([:scalar, :volume],          :handle_scalar_volume),
-        Handler.new([:scalar, :unit],            :handle_scalar_unit),
-        Handler.new([:scalar, :text],            :handle_scalar_text),
-        Handler.new([:text],                     :handle_text)
-      ]
+    def self.parse(tokens)
+      parsers = [
+        Munchie::Parsers::MultiplierScalar,
+        Munchie::Parsers::ScalarFraction,
+        Munchie::Parsers::ScalarMultiplier,
+        Munchie::Parsers::ScalarQuantity,
+        Munchie::Parsers::ScalarVolume, 
+        Munchie::Parsers::ScalarUnit,
+        Munchie::Parsers::ScalarText,
+        Munchie::Parsers::Text]
 
-      definitions.each do |handler|
-        handler.match(tokens, self)
+      parsers.each do |parser|
+        parser.new.match(tokens)
       end
 
-      tokens
-    end
-
-    def get_output(tokens)
-      
-      volume = tokens.select { |t| t.class.ancestors.include?(VolumeVal) }.first
-      if !volume.nil?
-        puts "Volume: #{volume.value.to_f} mls"
-      end
-
-      quantity = tokens.select { |t| t.class.ancestors.include?(QuantityVal) }.first
-      if !quantity.nil?
-        puts "quantity: #{quantity.word.to_f}"
-      end
-
-      weight = tokens.select { |t| t.class.ancestors.include?(WeightVal) }.first
-      if !weight.nil?
-        puts "Weight: #{weight.word.to_f} grams"
-      end
-      text = tokens.select { |t| t.class.ancestors.include?(TextVal) }
-      puts "Text: #{text.inspect}"
+      Munchie::Food.new(tokens)
     end
 
   end
 end
+

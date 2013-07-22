@@ -1,8 +1,10 @@
 module Munchie
-  class QuantityVal < Value
+  module Values
+    class Quantity < Value
 
-    def to_s
-      "Quantity: #{value} #{@word}"
+      def to_s
+        "Quantity: #{value} #{@word}"
+      end
     end
   end
 end

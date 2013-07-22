@@ -1,9 +1,11 @@
 module Munchie
-  class Weight < Tag
+  module Tokens
+	  class Weight < Tag
 
-    def to_s
-      'weight'
-    end
-  end
+	    def to_s
+	      'weight'
+	    end
+	  end
 
+	end
 end
