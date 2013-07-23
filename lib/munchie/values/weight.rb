@@ -3,7 +3,7 @@ module Munchie
     class Weight < Value
 
       def to_s
-        "#{@word} (weight: #{value} grams, metric)"
+        "#{@text} (weight: #{value} grams, metric)"
       end
     end
   end

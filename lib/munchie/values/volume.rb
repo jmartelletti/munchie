@@ -3,7 +3,7 @@ module Munchie
     class Volume < Value
 
       def to_s
-        "#{@word} (volume: #{value}mls, metric)"
+        "#{@text} (volume: #{value}mls, metric)"
       end
     end
   end

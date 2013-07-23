@@ -3,7 +3,7 @@ module Munchie
     class Quantity < Value
 
       def to_s
-        "Quantity: #{value} #{@word}"
+        "Quantity: #{value}"
       end
     end
   end

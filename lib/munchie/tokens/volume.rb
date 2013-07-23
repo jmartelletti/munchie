@@ -1,63 +1,31 @@
-module Munchie
-  module Tokens
-    class Volume < Tag
-      attr_accessor :volume
+module Munchie::Tokens
+  #
+  class Volume
+    include Munchie
 
-      def self.scan(tokens)
-        tokens.each do |token|
-                  if t = scan_for_cups(token)   then token.tag(t) end
-          if t = scan_for_spoons(token) then token.tag(t) end
-            if t = scan_for_teaspoons(token) then token.tag(t) end
-          if t = scan_for_metric(token) then token.tag(t) end
-        end
-      end
-
-      def self.scan_for_metric(token)
-        if token.word =~ /\A(ml|l)\z/
-          Volume.new($1, 1)
-        end
-      end
-
-      def self.scan_for_cups(token)
-        if token.word =~ /(cups?)/
-          VolumeCup.new($1, 250)
-        end
-      end
-
-      def self.scan_for_spoons(token)
-        if token.word =~ /(tbsp?|tablespoons?)/
-          VolumeTablespoon.new($1, 15)
-        end
-      end
-
-      def self.scan_for_teaspoons(token)
-        if token.word =~ /(tsp|teaspoon)/
-          VolumeTeaspoon.new($1, 5)
-        end
-      end
-
-      def to_s
-        'volume'
+    def scan(tokens)
+      tokens.each do |token|
+        if tag = scan_for_cups(token)      then token.tag(tag) end
+        if tag = scan_for_spoons(token)    then token.tag(tag) end
+        if tag = scan_for_teaspoons(token) then token.tag(tag) end
+        if tag = scan_for_metric(token)    then token.tag(tag) end
       end
     end
 
-      class VolumeTablespoon < Volume
-      def to_s
-        super << '-tablespoon'
-      end
+    def scan_for_metric(token)
+      Tag.new([:volume, :millilitres], 1) if token.text =~ /\A(ml|l)\z/
     end
 
-    class VolumeTeaspoon < Volume
-      def to_s
-        super << '-teaspoon'
-      end
+    def scan_for_cups(token)
+      Tag.new([:volume, :cups], 250) if token.text =~ /(cups?)/
     end
 
-    class VolumeCup < Volume
-      def to_s
-        super << '-cup'
-      end
+    def scan_for_spoons(token)
+      Tag.new([:volume, :tablespoon], 15) if token.text =~ /(tbsp?|tablespoons?)/
     end
 
+    def scan_for_teaspoons(token)
+      Tag.new([:volume, :teaspoon], 5) if token.text =~ /(tsp|teaspoon)/
+    end
   end
 end

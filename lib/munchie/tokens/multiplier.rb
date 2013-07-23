@@ -1,22 +1,16 @@
-module Munchie
-  module Tokens
-    class Multiplier < Tag
+module Munchie::Tokens
+  #
+  class Multiplier
+    include Munchie
 
-      def self.scan(tokens)
-        tokens.each do |token|
-          if t = scan_for_multiplier(token) then token.tag(t) end
-        end
+    def scan(tokens)
+      tokens.each do |token|
+        if tag = scan_for_multiplier(token) then token.tag(tag) end
       end
+    end
 
-      def self.scan_for_multiplier(token)
-        if token.word =~ /\Ax\z/
-          Multiplier.new(self, 'x')
-        end
-      end
-
-      def to_s
-        'multiplier'
-      end
+    def scan_for_multiplier(token)
+      return Tag.new(:multiplier, 'x') if token.text =~ /\Ax\z/
     end
   end
 end

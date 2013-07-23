@@ -11,7 +11,6 @@ require 'munchie/tokens/unit'
 require 'munchie/tokens/multiplier'
 require 'munchie/tokens/separator'
 require 'munchie/tokens/scalar'
-require 'munchie/tokens/weight'
 require 'munchie/tokens/quantity'
 require 'munchie/tokens/volume'
 
@@ -35,13 +34,12 @@ module Munchie
   # Accepts a text string and attempts to recognise and extract known quantities
   # and measures, the values are then returned along with the remaining text.
   def self.parse(text)
-    
     puts "Parsing:    \"#{text}\""
-    text = Normalizer.normalize(text)
+    text   = Normalizer.normalize(text)
     puts "Normalised: \"#{text}\""
     tokens = Tokenizer.tokenize(text)
     puts "Tokens:     #{tokens.inspect}"
-    food = Parser.parse(tokens)
+    food   = Parser.parse(tokens)
     puts "Food:       #{food}"
     puts ""
   end

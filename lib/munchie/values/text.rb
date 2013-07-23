@@ -3,7 +3,7 @@ module Munchie
     class Text < Value
 
       def to_s
-        "text:#{@word}"
+        "text:#{@text}"
       end
     end
   end

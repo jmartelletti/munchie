@@ -3,12 +3,21 @@ module Munchie
   class Tokenizer
 
     def self.tokenize(text)
+      tokenizers = [
+        Munchie::Tokens::Scalar,
+        Munchie::Tokens::Unit,
+        Munchie::Tokens::Multiplier,
+        Munchie::Tokens::Separator,
+        Munchie::Tokens::Text,
+        Munchie::Tokens::Volume,
+        Munchie::Tokens::Quantity]
+
       # create tokens for each word
       tokens = text.split(' ').map { |word| Token.new(word) }
 
       # for each type of tag, tag our tokens
-      [Munchie::Tokens::Scalar, Munchie::Tokens::Unit, Munchie::Tokens::Multiplier, Munchie::Tokens::Separator, Munchie::Tokens::Text, Munchie::Tokens::Volume, Munchie::Tokens::Quantity].each do |token|
-       token.scan(tokens)
+      tokenizers.each do |tokenizer|
+       tokenizer.new.scan(tokens)
       end
 
       # return tokens that are tagged

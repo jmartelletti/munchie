@@ -1,22 +1,16 @@
-module Munchie
-  module Tokens
-    class Text < Tag
+module Munchie::Tokens
+  #
+  class Text
+    include Munchie
 
-      def self.scan(tokens)
-        tokens.each do |token|
-          if t = scan_for_text(token) then token.tag(t) end
-        end
+    def scan(tokens)
+      tokens.each do |token|
+        if t = scan_for_text(token) then token.tag(t) end
       end
+    end
 
-      def self.scan_for_text(token)
-        if token.word =~ /\A(\D+)\z/
-          Text.new(self, $1)
-        end
-      end
-
-      def to_s
-        'text'
-      end
+    def scan_for_text(token)
+      return Tag.new(:text, $1) if token.text =~ /\A(\w+)\z/
     end
   end
 end

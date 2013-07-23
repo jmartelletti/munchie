@@ -1,45 +1,26 @@
-module Munchie
-  module Tokens
-    class Unit < Tag
+module Munchie::Tokens
+  #
+  class Unit
+    include Munchie
 
-      def self.scan(tokens)
-        tokens.each do |token|
-          if t = scan_for_unit(token)   then token.tag(t) end
-          if t = scan_for_units(token)   then token.tag(t) end
-          if t = scan_for_kilograms(token)   then token.tag(t) end
-        end
-      end
-
-      def self.scan_for_unit(token)
-        if token.word =~ /\A(g)\z/
-          UnitGram.new($1, 1)
-        end
-      end
-
-      def self.scan_for_units(token)
-        if token.word =~ /(large)/
-          Unit.new($1)
-        end
-      end
-
-      def self.scan_for_kilograms(token)
-        if token.word =~ /(kg)/
-          UnitKilogram.new($1, 1000)
-        end
-      end    
-
-      def to_s
-        'unit'
+    def scan(tokens)
+      tokens.each do |token|
+        if tag = scan_for_unit(token)      then token.tag(tag) end
+        if tag = scan_for_units(token)     then token.tag(tag) end
+        if tag = scan_for_kilograms(token) then token.tag(tag) end
       end
     end
 
-    class UnitGram < Unit
-      def to_s
-        super << '-gram'
-      end
+    def scan_for_unit(token)
+      Tag.new([:unit, :gram], 1) if token.text =~ /\A(g)\z/
     end
 
-    class UnitKilogram < Unit
+    def scan_for_units(token)
+      Tag.new([:unit], $1) if token.text =~ /(large)/
+    end
+
+    def scan_for_kilograms(token)
+      Tag.new([:unit, :kilogram], 1000) if token.text =~ /(kg)/
     end
 
   end

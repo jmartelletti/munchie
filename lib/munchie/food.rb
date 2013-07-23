@@ -1,26 +1,34 @@
 module Munchie
   class Food
+    attr_reader :tokens
+
     def initialize(tokens)
-      volume = tokens.select { |t| t.class.ancestors.include?(Munchie::Values::Volume) }.first
-      if !volume.nil?
-        puts "Volume: #{volume.value.to_f} mls"
-      end
-
-      quantity = tokens.select { |t| t.class.ancestors.include?(Munchie::Values::Quantity) }.first
-      if !quantity.nil?
-        puts "quantity: #{quantity.word.to_f}"
-      end
-
-      weight = tokens.select { |t| t.class.ancestors.include?(Munchie::Values::Weight) }.first
-      if !weight.nil?
-        puts "Weight: #{weight.word.to_f} grams"
-      end
-      text = tokens.select { |t| t.class.ancestors.include?(Munchie::Values::Text) }
-      puts "Text: #{text.inspect}"
+      @tokens = tokens
     end
 
     def to_s
-      "Food"
+      output = []
+      output << "Quantity: #{quantity.value}" if !quantity.nil?
+      output << "Weight: #{weight}" if !weight.nil?
+      output << "Volume: #{volume}" if !volume.nil?
+      output << "Text: #{text}" if !text.nil?
+      "<#{output.join(", ")}>"
+    end
+
+    def quantity
+      tokens.select { |t| t.class.ancestors.include?(Munchie::Values::Quantity) }.first
+    end
+
+    def weight
+      tokens.select { |t| t.class.ancestors.include?(Munchie::Values::Weight) }.first
+    end
+
+    def text
+      tokens.select { |t| t.class.ancestors.include?(Munchie::Values::Text) }
+    end
+
+    def volume
+      tokens.select { |t| t.class.ancestors.include?(Munchie::Values::Volume) }.first
     end
   end
 end
