@@ -41,6 +41,6 @@ module Munchie
     puts "Tokens:     #{tokens.inspect}"
     food   = Parser.parse(tokens)
     puts "Food:       #{food}"
-    puts ""
+    food
   end
 end

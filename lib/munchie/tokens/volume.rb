@@ -13,7 +13,8 @@ module Munchie::Tokens
     end
 
     def scan_for_metric(token)
-      Tag.new([:volume, :millilitres], 1) if token.text =~ /\A(ml|l)\z/
+      Tag.new([:volume, :millilitres], 1) if token.text =~ /\A(ml)\z/
+      Tag.new([:volume, :litres], 1000) if token.text =~ /\A(l)\z/
     end
 
     def scan_for_cups(token)

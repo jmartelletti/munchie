@@ -10,7 +10,7 @@ Gem::Specification.new do |s|
   s.email    = ['james@martelletti.com.au']
   s.homepage = 'http://github.com/jmartelletti/munchie'
   s.rdoc_options = ['--charset=UTF-8']
-  s.extra_rdoc_files = %w[Readme.md HISTORY.md LICENSE]
+  s.extra_rdoc_files = %w[Readme.md LICENSE]
   s.files = `git ls-files`.split("\n")
   s.test_files = `git ls-files -- test`.split("\n")
 

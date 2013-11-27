@@ -6,7 +6,7 @@ module Munchie
       tokens.each_index do |i|
         if tags_match?(tokens, i)
           parse(tokens, i)
-          puts "Tokens:     #{tokens} after #{self.class}"
+          #puts "Tokens:     #{tokens} after #{self.class}"
         end
       end
     end
