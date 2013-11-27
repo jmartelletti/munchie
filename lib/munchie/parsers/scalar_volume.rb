@@ -11,7 +11,7 @@ module Munchie::Parsers
 
       new_val = scalar.value.to_f * volume.value.to_f
 
-      new_token = Munchie::Values::Volume.new("#{scalar.token.text} #{volume.token.text}", "volime", new_val)
+      new_token = Munchie::Values::Volume.new("#{scalar.token.text} #{volume.token.text}", "volume", new_val)
 
       tokens.delete_at(index+1)
       tokens.delete_at(index)

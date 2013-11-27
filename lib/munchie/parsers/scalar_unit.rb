@@ -11,9 +11,9 @@ module Munchie::Parsers
 
       #new_token = Token.new("#{quantity.type}#{unit.type}")
       #puts "<> #{unit.volume}"
-      new_val = quantity.value
+      new_val = quantity.value.to_f * unit.value.to_f
       #new_token.tag(Weight.new(new_token))
-      new_token = Munchie::Values::Weight.new("#{quantity.value}", "weight", new_val)
+      new_token = Munchie::Values::Weight.new("#{quantity.value} #{unit.token.text}", "weight", new_val)
 
       tokens.delete_at(index+1)
       tokens.delete_at(index)

@@ -10,7 +10,7 @@ module Munchie
         [/\(/, ' ( '],
         [/\)/, ' ) '],
         [/,/, ' , '],
-        [/([\d\.]+)([\w]|[^\/\d\s])/, '\1 \2'] # Split strings such as 600g 1.5kg 123oz
+        [/([\d\.]+)([\D]|[^\/\d\s])/, '\1 \2'] # Split strings such as 600g 1.5kg 123oz
       ]
 
       text = text.to_s.downcase
